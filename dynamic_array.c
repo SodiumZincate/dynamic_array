@@ -19,7 +19,7 @@ int query_ask(FILE *fread, FILE *fwrite)
                "3)Check for number of pages of the required book\n4)Exit\n");
         printf("-------------------------------------------------------------------\n");
         scanf("%d", &query_continue);
-        if (query_continue == 4)
+        if (query_continue != 1)
         {
             return query_continue;
         }
