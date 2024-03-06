@@ -2,15 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+//#include <stdbool.h>
 
 //Array to store the number of books in each shelf
 int *no_of_books;
+
+typedef enum{false,true}bool;
 
 //Structure to store the details of the book
 typedef struct{
     char book_name[50];
     int book_page;
-    int book_price;
+    float book_price;
 }book;
 
 /*
@@ -19,6 +22,13 @@ typedef struct{
     2nd dereference -> Value of structure
 */
 book** book_info;
+
+char* string_lower(char* text_string){
+    for(int i=0;text_string[i];i++){
+        text_string[i]=tolower(text_string[i]);
+    }
+    return text_string;
+}
 
 //Function for checking password
 int passowrd_check()
@@ -35,7 +45,7 @@ int query_ask()
 {
     int query_continue;
     printf("\n-------------------------------------------------------------------\n");
-    printf("1)Add a book\n2)Display all the books information\n3)Check for the information of books on nth shelf\n"
+    printf("0)Find a book\n1)Add a book\n2)Display all the books information\n3)Check for the information of books on nth shelf\n"
             "4)Check for information on the required book\n5)Delete a book\n6)Change the number of shelves\n"
             "7)Exit\n");
     printf("-------------------------------------------------------------------\n");\
@@ -63,8 +73,9 @@ int ask_book_no()
 
 void main()
 {
-    int no_of_shelves,shelf_number,i,j,book_number, page_number, price_number;
-    char name_of_book[50];
+    float price_number;
+    int no_of_shelves,shelf_number,i,j,book_number, page_number;
+    char name_of_book[50],tmp_book_name[50],tmp_search_name[50];
     FILE *fread, *fwrite;
     /*
         library_records.txt file stores all the user input data so that it can be used to
@@ -99,12 +110,14 @@ void main()
     }
 
     while(fscanf(fread,"%d",&shelf_number)!=EOF){
+        //printf("Enter the book number: ");
+        fscanf(fread, " %d", &book_number);
         //printf("Enter the name of the book: ");
         fscanf(fread, " %[^\n]*s", name_of_book);
         //printf("Enter the pages of the book: ");
         fscanf(fread,"%d", &page_number);
         //printf("Enter the price of the book: ");
-        fscanf(fread,"%d", &price_number);
+        fscanf(fread,"%f", &price_number);
         /* These can also be written as:
             strcpy((book_info[shelf_number][no_of_books[shelf_number]]).book_name,name_of_book);
             book_info[shelf_number][no_of_books[shelf_number]].book_price = price_number;
@@ -134,8 +147,12 @@ void main()
             scanf(" %[^\n]*s",name_of_book);
             printf("Enter the pages of the book: ");
             scanf("%d", &page_number);
+            while(page_number<=0){
+                printf("Please enter a valid number of pages: ");
+                scanf("%d",&page_number);
+            }
             printf("Enter the price of the book: ");
-            scanf("%d", &price_number);
+            scanf("%f", &price_number);
             /* These can also be written as:
                 strcpy((book_info[shelf_number][no_of_books[shelf_number]]).book_name,name_of_book);
                 book_info[shelf_number][no_of_books[shelf_number]].book_price = price_number;
@@ -154,12 +171,38 @@ void main()
                 for(j=0;j<no_of_books[i];j++){
                     if(book_info[i][j].book_page!=0){
                         printf("\n-------------------------------------------------------------------\n");
-                        printf("|\tShelf Number = %d\n|\tBook Number = %d\n|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %d\n"\
+                        printf("|\tShelf Number = %d\n|\tBook Number = %d\n|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %0.2f\n"\
                             ,i+1,j+1, book_info[i][j].book_name, \
                         book_info[i][j].book_page, book_info[i][j].book_price);
                         printf("-------------------------------------------------------------------\n");
                     }
                 }
+            }
+        }
+        //Query to find if the entered book is available, if yes: print its information
+        else if (query_terminate == 0)
+        {
+            bool book_found = false;
+            printf("\nEnter the book name: ");
+            scanf(" %[^\n]*s",tmp_book_name);
+
+            for(i=0;i<no_of_shelves;i++){
+                for(j=0;j<no_of_books[i];j++){
+                    strcpy(tmp_search_name,book_info[i][j].book_name);
+                    string_lower(tmp_search_name);
+                    string_lower(tmp_book_name);
+                    if(book_info[i][j].book_page!=0 && strcmp(tmp_search_name,tmp_book_name)==0){
+                        printf("\n-------------------------------------------------------------------\n");
+                        printf("|\tShelf Number = %d\n|\tBook Number = %d\n|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %0.2f\n"\
+                            ,i+1,j+1, book_info[i][j].book_name, \
+                        book_info[i][j].book_page, book_info[i][j].book_price);
+                        printf("-------------------------------------------------------------------\n");
+                        book_found=true;
+                    }
+                }
+            }
+            if(!book_found){
+                printf("\nThe required book was not found.");
             }
         }
         //Simple query to print the information of books in the nth shelf
@@ -179,8 +222,8 @@ void main()
             else{
                 for(i=0;i<no_of_books[shelf_number];i++){
                     printf("\n-------------------------------------------------------------------\n");
-                    printf("|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %d\n", book_info[shelf_number][i].book_name, \
-                    book_info[shelf_number][i].book_page, book_info[shelf_number][i].book_price);
+                    printf("|\tBook number = %d\n|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %0.2f\n",i+1 \
+                    ,book_info[shelf_number][i].book_name, book_info[shelf_number][i].book_page, book_info[shelf_number][i].book_price);
                     printf("-------------------------------------------------------------------\n");
                 }
             }
@@ -210,7 +253,7 @@ void main()
                     book_number--;
                 }
                 printf("\n-------------------------------------------------------------------\n");
-                printf("|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %d\n", book_info[shelf_number][book_number].book_name, \
+                printf("|\tBook name = %s\n|\tNumber of pages = %d\n|\tPrice = %0.2f\n", book_info[shelf_number][book_number].book_name, \
                     book_info[shelf_number][book_number].book_page, book_info[shelf_number][book_number].book_price);
                 printf("-------------------------------------------------------------------\n");
             }
@@ -226,15 +269,18 @@ void main()
                 shelf_number=ask_shelf_no();
                 shelf_number--;
             }
-            char tmp_book_name[50];
             printf("\nEnter the book name to be deleted: ");
             scanf(" %[^\n]*s",tmp_book_name);
+            
             for(i=0;i<no_of_books[shelf_number];i++){
-                if(strcmp(tmp_book_name,book_info[shelf_number][i].book_name)==0){
+                strcpy(tmp_search_name,book_info[shelf_number][i].book_name);
+                string_lower(tmp_search_name);
+                string_lower(tmp_book_name);
+                if(strcmp(tmp_book_name,tmp_search_name)==0){
+                    printf("\nBook named %s deleted successfully.\n",book_info[shelf_number][i].book_name);
                     //memove() function moves the address of the all the succeding books the to nth book thus deleting the nth book
                     memmove(&(book_info[shelf_number][i]),&(book_info[shelf_number][i+1]),(no_of_books[shelf_number]-i)*sizeof(book));
                     no_of_books[shelf_number]--; 
-                    printf("\nBook named %s deleted successfully.\n",tmp_book_name);
                 }
             }
         }
@@ -294,7 +340,7 @@ void main()
     fprintf(fwrite,"%d\n",no_of_shelves);
     for(i=0;i<no_of_shelves;i++){
         for(j=0;j<no_of_books[i];++j){
-            fprintf(fwrite, "%d %s\n%d %d\n", i , book_info[i][j].book_name, book_info[i][j].book_page, book_info[i][j].book_price);
+            fprintf(fwrite, "%d %d %s\n%d %0.2f\n", i ,j, book_info[i][j].book_name, book_info[i][j].book_page, book_info[i][j].book_price);
         }
     }
     /*library_records_backup.txt is used as a new file to store the previous and new data 
