@@ -3,6 +3,7 @@ The features include:
 -Adding books
 -Displaying books information
 -Deleting books
+-Finding books
 
 A library_records.txt is included as as sample data 
 
