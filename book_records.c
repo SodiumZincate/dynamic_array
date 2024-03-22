@@ -356,10 +356,7 @@ void main()
     fclose(fwrite);
 
     remove("library_records.txt");
-    if (rename("library_records_backup.txt", "library_records.txt") != 0) {
-        printf(strerror(errno));
-        exit(2);
-    }
+    rename("library_records_backup.txt", "library_records.txt");
 
     if (no_of_books)
         free(no_of_books);
