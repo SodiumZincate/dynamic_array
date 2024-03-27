@@ -10,5 +10,5 @@ A library_records.txt is included as as sample data
 To run the program:
 IN COMMAND LINE
 -------------------------------------------------------------------------------
-chmod +x build.sh
-./build.sh
+chmod +x linux_build.sh
+./linux_build.sh
