@@ -8,6 +8,8 @@ The features include:
 A library_records.txt is included as as sample data 
 
 To run the program:
+Compile and run book_records.c
+
 IN COMMAND LINE
 -------------------------------------------------------------------------------
 chmod +x linux_build.sh
