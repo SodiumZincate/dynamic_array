@@ -1,4 +1,4 @@
-This is a small project to understand the basics of dynamic array using book records
+```This is a small project to understand the basics of dynamic array using book records
 The features include:
 -Adding books
 -Displaying books information
@@ -13,4 +13,4 @@ Compile and run book_records.c
 IN COMMAND LINE
 -------------------------------------------------------------------------------
 chmod +x linux_build.sh
-./linux_build.sh
+./linux_build.sh```
