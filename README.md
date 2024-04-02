@@ -17,5 +17,8 @@ IN LINUX COMMAND LINE
 -------------------------------------------------------------------------------
 `
 chmod +x linux_build.sh
+`
+
+`
 ./linux_build.sh
 `
